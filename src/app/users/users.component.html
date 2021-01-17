@@ -1,0 +1,48 @@
+<nav>
+<div *ngIf="isZichtbaarForm" id="userForm">
+	<h2>Nieuwe gebruiker</h2>
+	<form [formGroup]="userForm" (ngSubmit)="onSubmit(userForm.value)">
+		<table>
+			<tr>
+				<td>
+				    <mat-label>Nieuwe gebruiker: &nbsp;&nbsp;</mat-label>
+				    <input matInput id="nameUser" placeholder="Jane Doe" value="Jane Doe"  formControlName="nameUser">
+				</td>
+				<td>
+		 			<button type="submit" mat-fab color="success" aria-label="Save button"><i class='material-icons'>save</i></button>
+				</td>
+			</tr>
+		</table>
+	</form>
+</div>
+<div *ngIf="isZichtbaarList" id="userList">
+	<h2>Gebruikers&nbsp;
+		<a [routerLink]="['/user/new']">
+			<button mat-fab color="success" aria-label="Add button"><i class='material-icons'>library_add</i></button>
+		</a>
+	</h2>
+	<mat-grid-list class='row' cols = "7">
+	 	<ul class="users">
+			<div *ngFor="let user of users">
+		 		<!---
+		 		<mat-grid-tile [colspan] = "1" [rowspan] = "1">
+					<a routerLink="user/detail/{{user.id}}"><span class="badge">{{ user.id }}</span></a>
+				</mat-grid-tile>
+				--->
+		 		<mat-grid-tile [colspan] = "4" [rowspan] = "1">		
+					<a routerLink="user/detail/{{user.id}}">{{ user.name }}</a>
+				</mat-grid-tile>
+		 		<mat-grid-tile [colspan] = "1" [rowspan] = "1">
+		 			<button mat-fab color="success" aria-label="Delete button" (click) ="deleteUser(user.id);"><mat-icon>delete</mat-icon></button>
+				</mat-grid-tile>
+		 		<mat-grid-tile [colspan] = "1" [rowspan] = "1">
+					<a routerLink="notes/list/{{user.id}}"><button mat-fab color="success" aria-label="NotesList button"><mat-icon>library_books</mat-icon></button></a>
+				</mat-grid-tile>
+		 		<mat-grid-tile [colspan] = "1" [rowspan] = "1">
+					<a routerLink="notes/add/{{user.id}}"><button mat-fab color="success" aria-label="NotesList button"><mat-icon>library_add</mat-icon></button></a>
+				</mat-grid-tile>
+			</div>
+		</ul>
+	</mat-grid-list>
+</div>
+</nav>

@@ -1,0 +1,136 @@
+<h2>
+	{{ notesTitle }} 
+	&nbsp;<button mat-fab color="success" aria-label="Add button" (click) ="createNote(activeUserId);"><i class='material-icons'>library_add</i></button>
+	<span [hidden]="isZichtbaarSearch">&nbsp;<button mat-fab color="success" aria-label="Search button" (click) ="searchNotesForm(activeUserId);"><i class='material-icons'>search</i></button></span>
+	<span [hidden]="isZichtbaarList">&nbsp;<button mat-fab color="success" aria-label="List button" (click) ="back();"><i class='material-icons'>library_books</i></button></span>
+</h2>
+<div *ngIf="isZichtbaarNew" id="noteForm">
+		<form [formGroup]="newNoteForm" (ngSubmit)="onSubmit(newNoteForm.value)">
+			<input type="hidden" name="noteId" value="0"  formControlName="noteId">
+			<input type="hidden" name="noteUserId" value="0"  formControlName="noteUserId">
+			<table border="0">
+				<tr>
+					<td colspan="2">
+					    Nieuwe notitie
+				    </td>
+				</tr>
+				<tr>
+					<td>
+					   <textarea id="noteText" placeholder="Ipsum Lorem" value="Ipsum Lorem" formControlName="noteText" cols=40 rows=15></textarea>
+					</td>
+					<td valign="top">
+						<table>
+							<tr>
+								<td style="vertical-align: top;">
+						 			<button type="submit" mat-fab color="success" aria-label="Save button"><i class='material-icons'>save</i></button>
+						 		</td>
+								<td style="vertical-align: top;">
+						 			<button type="button" mat-fab color="success" aria-label="Reset button" (click) ="clearTextNote();"><i class='material-icons'>close</i></button>
+						 		</td>
+								<td style="vertical-align: top;">
+						 			<button type="button" mat-fab color="success" aria-label="Back button" (click) ="back();"><i class='material-icons'>fast_rewind</i></button>
+						 		</td>
+							</tr>
+							<tr *ngFor="let label of labels">
+								<td colspan="2">
+									<button type="button">{{ label.labelText }}&nbsp;</button>
+						 		</td>
+								<td>
+						 			<button type="button" aria-label="Delete button" (click) ="deleteNoteLabel(label.id);"><i class='material-icons'>delete</i></button>
+						 		</td>
+						 	</tr>
+							<tr>
+								<td colspan="2">
+									<select name="addLabel" #mySelect (change)='onOptionsSelected(mySelect.value)'>
+										<option value={{label.id}}   *ngFor="let label of allLabels">{{label.labelText}}</option>
+									</select>
+						 		</td>
+								<td>
+						 			<button type="button" aria-label="Add button" (click) ="insertNoteLabel();"><i class='material-icons'>add</i></button>
+						 		</td>
+						 	</tr>
+							<tr>
+								<td colspan="2">
+									<input type="text"  name="labelText" value="0"  formControlName="labelText">
+						 		</td>
+								<td>
+						 			<button type="button" aria-label="Add button" (click) ="insertNoteLabelText();"><i class='material-icons'>add</i></button>
+						 		</td>
+						 	</tr>
+						</table>
+					</td>
+			 	</tr>
+			 </table>
+		</form>
+</div>
+<div *ngIf="isZichtbaarList" id="NoteList">
+	<table>
+		<tr *ngFor="let note of notes">
+			<!--- <td><span class="badge">{{ note.id }}.&nbsp;</span></td> --->
+		 	<td>{{ note.noteText }}</td>
+		 	<td>
+		 		<button mat-fab color="success" aria-label="Edit button" (click) ="editNote(note.id);"><mat-icon>edit</mat-icon></button>
+			</td>
+		 	<td>
+		 		<button mat-fab color="success" aria-label="Delete button" (click) ="deleteNote(note.id);"><mat-icon>delete</mat-icon></button>
+			</td>
+		</tr>
+	</table>
+</div>
+<div *ngIf="isZichtbaarSearch" id="NoteSearch">
+	<div *ngIf="isZichtbaarSearchForm" id="NoteSearch">
+		<form [formGroup]="noteSearchForm" (ngSubmit)="doSearch(noteSearchForm.value)">
+			<input type="hidden" value="0" formControlName="noteUserId">
+			<table border="0">
+				<tr>
+					<td colspan="2">
+					    <b><u>Zoek Notities</u></b>
+				    </td>
+				</tr>
+				<tr><td>Tekst:</td>
+					<td><input type="text" value="" formControlName="searchString"></td></tr>
+				<tr><td>Label:
+					<td>
+						<select name="searchLabel" formControlName="searchLabel">
+							<option value=-1>&nbsp;</option>
+							<option value={{label.id}} *ngFor="let label of allLabels">{{label.labelText}}</option>
+						</select>
+					</td>
+			 	</tr>
+				<tr><td style="vertical-align:top">Zoektype</td>
+					<td><input type="radio" id="tekst" formControlName="searchType" value="Tekst">
+						<label for="tekst">Tekst</label><br>
+						<input type="radio" id="label" formControlName="searchType" value="Label">
+						<label for="label">Label</label><br>
+						<input type="radio" id="beiden" formControlName="searchType" value="Beiden" checked>
+						<label for="searchType">Beiden</label>
+					</td>
+				</tr>
+				<tr><td colspan="2">&nbsp;</td></tr>
+				<tr>
+					<td colspan="2" align="center">
+			 			<button type="submit" mat-fab color="success" aria-label="Save button"><i class='material-icons'>search</i></button>&nbsp;
+			 			<button type="reset" mat-fab color="success" aria-label="Reset button"><i class='material-icons'>delete</i></button>&nbsp;
+			 			<button type="button" mat-fab color="success" aria-label="Back button" (click) ="back();"><i class='material-icons'>close</i></button>
+					</td>
+			 	</tr>
+			 </table>
+		</form>
+	</div>
+	<div *ngIf="isZichtbaarSearchResults" id="NoteSearch">
+		<table>
+			<tr><td><b><u>Zoekresultaten:</u></b></td></tr>
+			<tr *ngFor="let note of searchResults">
+				<td><span class="badge">{{ note.id }}.&nbsp;</span></td>
+			 	<td>{{ note.noteText }}</td>
+			 	<td>
+			 		<button mat-fab color="success" aria-label="Edit button" (click) ="editNote(note.id);"><mat-icon>edit</mat-icon></button>
+				</td>
+			 	<td>
+			 		<button mat-fab color="success" aria-label="Delete button" (click) ="deleteNote(note.id);"><mat-icon>delete</mat-icon></button>
+				</td>
+			</tr>
+			<tr><td><button mat-fab color="success" aria-label="Search button" (click) ="searchNotesForm(activeUserId);">Opnieuw zoeken</button></td></tr>
+		</table>
+	</div>		
+</div>
